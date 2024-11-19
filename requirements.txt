@@ -1,1 +1,4 @@
-pywatchman~=2.0.0
+python-dotenv
+watchdog
+PyQt6 
+mysql-connector-python
