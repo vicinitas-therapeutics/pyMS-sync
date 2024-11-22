@@ -88,12 +88,13 @@ class FileWatcher(FileSystemEventHandler):
                 self.cleanup()
 
     def on_modified(self, event):
-        self.print(
-            message="skipping...",
-            event_type=event.event_type,
-            pid=os.getpid(),
-            src_path=event.src_path,
-        )
+        print(".")
+        # self.print(
+        #     message="skipping...",
+        #     event_type=event.event_type,
+        #     pid=os.getpid(),
+        #     src_path=event.src_path,
+        # )
         # threading.Thread(target=self.handle_event,
         #                  args=(event.src_path, event.event_type ),
         #                  daemon=True).start()
