@@ -21,7 +21,6 @@ logging.basicConfig(
     level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-
 class FileWatcherGUI(QMainWindow):
     def __init__(self, config_file_path=None):
         super().__init__()
@@ -83,6 +82,13 @@ class FileWatcherGUI(QMainWindow):
         self.watcher_thread = None
         self.file_watcher = None
 
+        # Automatically start the file watcher
+        self.start_watcher()
+
+    def print_to_gui(self, message):
+        self.text_area.append(message)
+        self.text_area.moveCursor(QTextCursor.MoveOperation.End)
+
     def start_watcher(self):
         logging.debug("Starting file watcher.")
         if self.watcher_thread is None or not self.watcher_thread.is_alive():
@@ -102,31 +108,29 @@ class FileWatcherGUI(QMainWindow):
 
     def run_file_watcher(self):
         logging.debug("Running file watcher.")
-        # read from the config file and pass the database details to the FileWatcher
-        database_details = {
-            "db_host": self.config["db_host"],
-            "db_port": self.config["db_port"],
-            "db_name": self.config["db_name"],
-            "db_user": self.config["db_user"],
-            "db_password": self.config["db_password"],
-        }
+        try:
+            # read from the config file and pass the database details to the FileWatcher
+            database_details = {
+                "db_host": self.config["db_host"],
+                "db_port": self.config["db_port"],
+                "db_name": self.config["db_name"],
+                "db_user": self.config["db_user"],
+                "db_password": self.config["db_password"],
+            }
 
-        watch_directory = self.watch_dir_input.text()
-        nas_directory = self.nas_dir_input.text()
-        watch_file_ext = ".d"
-        logging.debug(f"Watch Directory: {watch_directory}")
-        logging.debug(f"NAS Directory: {nas_directory}")
-        self.file_watcher = FileWatcher(
-            watch_directory, nas_directory, watch_file_ext, database_details
-        )
-        self.file_watcher.set_output_element(self.print_to_gui)
-        self.file_watcher.start_watchman()
-
-    def print_to_gui(self, message):
-        self.text_area.append(message)
-        self.text_area.moveCursor(QTextCursor.MoveOperation.End)
-        logging.debug(message)
-        # self.text_area.append(message)
+            watch_directory = self.watch_dir_input.text()
+            nas_directory = self.nas_dir_input.text()
+            watch_file_ext = ".d"
+            logging.debug(f"Watch Directory: {watch_directory}")
+            logging.debug(f"NAS Directory: {nas_directory}")
+            self.file_watcher = FileWatcher(
+                watch_directory, nas_directory, watch_file_ext, database_details
+            )
+            self.file_watcher.set_output_element(self.print_to_gui)
+            self.file_watcher.start_watchman()
+        except Exception as e:
+            logging.error(f"Error in file watcher: {e}")
+            # self.print_to_gui(f"Error in file watcher: {e}")
 
 
 def main():

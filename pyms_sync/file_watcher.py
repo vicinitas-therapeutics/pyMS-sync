@@ -89,6 +89,7 @@ class FileWatcher(FileSystemEventHandler):
 
     def on_modified(self, event):
         print(".")
+        time.sleep(20)
         # self.print(
         #     message="skipping...",
         #     event_type=event.event_type,
